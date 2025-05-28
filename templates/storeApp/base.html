@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jalixy - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'storeApp/css/styles.css' %}">
+    <link rel="shortcut icon" type="img/jalixy_store_icon" href="{% static 'storeApp/img/jalixy_store_icon2.ico' %}">
+</head>
+<body class="bg-light">
+
+    <!-- Barra de navegación -->
+    <nav style="background-color: #8080fa;" class="navbar navbar-expand-lg navbar-dark text-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <img src="{% static 'storeApp/img/jalixy_store_logo.jpg' %}"
+                style="height: 40px; width: 120px; transition: transform 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'"
+                onmouseout="this.style.transform='scale(1)'"> 
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0 d-flex ms-auto">
+                    {% if user.is_authenticated %}
+                        <span class="btn btn-link ms-3 text-light">¡Hola, {{ user.username }}!</span>
+                        <a href="{% url 'logout' %}" class="btn btn-link ms-3 text-light">
+                            Salir
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-link ms-3 text-light">
+                            Login
+                        </a>
+                        <a href="{% url 'registro' %}" class="btn btn-link ms-3 text-light">
+                            Registrarse
+                        </a>                   
+                    {% endif %}
+                    <a href="{% url 'cart' %}" class="btn btn-link ms-3 text-light">Carrito</a>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Bloque donde se inserta contenido -->
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer style="background-color: #8080fa;" class=" text-light text-center py-3">
+        <p>Síguenos en nuestras redes sociales</p>
+    </footer>
+</body>
+</html>

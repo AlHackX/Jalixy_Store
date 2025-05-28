@@ -1,0 +1,32 @@
+{% extends 'storeApp/base.html' %}
+{% block content %}
+
+<div class="mt-5">
+    <h3>Reseñas</h3>
+    {% for review in reviews %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>{{ review.user.username }}</h5>
+                <div class="text-warning">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= reseña.calificación %}★{% else %}☆{% endif %}
+                    {% endfor %}
+                </div>
+                <p>{{ review.comment }}</p>
+                <small class="text-muted">{{ review.local_date|date:"d/m/Y H:i" }}</small>
+            </div>
+        </div>
+    {% empty %}
+        <p>No hay reseñas aún.</p>
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'add_review' product.id %}" class="btn btn-primary">Dejar reseña</a>
+    {% else %}
+        <div class="alert alert-info">
+            <a href="{% url 'login' %}?next={% url 'product_details' product.id %}" class="alert-link">Inicia sesión</a> para dejar una reseña.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

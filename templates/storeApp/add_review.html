@@ -1,0 +1,189 @@
+{% extends 'storeApp/base.html' %}
+{% block content %}
+
+<style>
+    .contenedor-principal {
+        display: flex;
+        min-height: 80vh;
+        margin: 30px auto;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+    
+    .formulario-seccion {
+        flex: 1;
+        padding: 30px;
+        border-right: 1px solid #eee;
+    }
+
+    .formulario-seccion h2 {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .reseñas-seccion {
+        flex: 1;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .lista-reseñas {
+        flex-grow: 1;
+        overflow-y: auto;
+        max-height: 70vh;
+        padding-right: 15px;
+    }
+    
+    .reseña-card {
+        margin-bottom: 20px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: #f9f9f9;
+    }
+    
+    .titulo-reseñas {
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #eee;
+    }
+    
+    /* Estilo para la barra de scroll */
+    .lista-reseñas::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .lista-reseñas::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    
+    .lista-reseñas::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 4px;
+    }
+    
+    .lista-reseñas::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+    /* Estilos para las estrellas */
+    .star-rating {
+        align-items: center;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+    
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+    
+    .star-rating label {
+        font-size: 2rem;
+        color: #ddd;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating input[type="radio"]:hover ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #ffc107;
+    }
+
+    .comment-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 25px 0;
+        width: 100%;
+    }
+    
+    .comment-container label {
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+    
+    .comment-container textarea {
+        width: 80%;
+        max-width: 500px;
+        min-height: 120px;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+    }
+
+</style>
+
+<div class="container mt-4">
+    <div class="contenedor-principal">
+        <!-- Sección izquierda: Formulario -->
+        <div class="formulario-seccion">
+            <h2>Dejar reseña para {{ product.product_name }}</h2>
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3" style="text-align: center;">
+                    <label class="form-label">Calificación:</label>
+                    <div class="star-rating">
+                        {% for value, text in form.rating.field.choices %}
+                        <input type = "radio" id = "rating{{ value }}" name = "rating" 
+                            value = "{{ value }}"
+                            {% if form.rating.value == value|stringformat:"s" %} checked {% endif %}>
+                            <label for = "rating{{ value }}" title = "{{ text }}">★</label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Campo de comentario -->
+                <div class="comment-container" style="text-align: center;">
+                    <label class="form-label">Comentario:</label>
+                    {{ form.comment }}
+                    <button type="submit" class="btn btn-success" style="background-color: #8080fa; border-style: none; border-radius: none; margin-top: 30px;">
+                        Enviar reseña
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sección derecha: Reseñas existentes -->
+        <div class="reseñas-seccion">
+            <h3 class="titulo-reseñas">Reseñas existentes</h3>
+            <div class="lista-reseñas">
+                {% for review in reviews %}
+                <div class="reseña-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ review.user.username }}</strong>
+                            <span class="text-warning ms-2">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                            </span>
+                        </div>
+                        <small class="text-muted">{{ review.date|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <p class="mt-2 mb-3">{{ review.comment }}</p>
+                    
+                    {% if user == review.user or user.is_superuser %}
+                    <form method="post" action="{% url 'delete_review' review.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Eliminar
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div class="alert alert-info">No hay reseñas aún. ¡Sé el primero en comentar!</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

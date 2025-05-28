@@ -1,0 +1,70 @@
+{% extends 'storeApp/base.html' %}
+{% block content %}
+
+<style>
+    .col-md-6 {
+        margin-left: 25%;
+    }
+
+    .registro {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        margin: 30px 130px 30px;
+        text-align: center;
+    }
+    
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: black;
+    }
+
+    .registro p:nth-child(2) label,
+    .registro p:nth-child(3) label,
+    .registro p:nth-child(4) label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .registro p:nth-child(2) input,
+    .registro p:nth-child(3) input,
+    .registro p:nth-child(4) input {
+        display: block;
+        margin: 0 auto;
+    }
+
+    .btn-primary {
+        background-color: #8080fa;
+        border-style: none;
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 15px;
+        margin: 10px auto;
+    }
+    
+    .btn-primary:hover {
+        background-color: #8080fa;
+    }
+
+    ul.errorlist {
+        color: red;
+        list-style-type: none;
+        padding: 0;
+    }
+
+</style>
+
+<div class="col-md-6">
+    <form method="post" class="registro">
+        <h2 class="mb-4">Registrarse</h2>
+            {% csrf_token %}
+            {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Registrarse</button>
+    </form>
+</div>
+
+{% endblock %}
