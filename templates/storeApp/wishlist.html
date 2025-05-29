@@ -1,0 +1,37 @@
+{% extends 'storeApp/base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Mi Lista de Deseados</h2>
+    {% if products %}
+        <div class="row">
+            {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.product_name }}</h5>
+                        <p class="card-text">{{ product.product_description }}</p>
+                        <p class="text-success">
+                            {% if product.has_offer %}
+                                <del>${{ product.product_full_cost }}</del> 
+                                ${{ product.product_offer_cost }}
+                            {% else %}
+                                ${{ product.product_full_cost }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'toggle_wishlist' product.id %}" class="btn btn-sm btn-danger">
+                            Quitar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Tu lista de deseos está vacía. ¡Explora nuestros productos!
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

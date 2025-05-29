@@ -66,6 +66,28 @@
                                 Comprar
                             </a>
                         </div>
+
+                        {% if user.is_authenticated %}
+                            <div style="margin: 10px auto;">
+                                <a href="{% url 'toggle_wishlist' product.id %}" class="btn btn-danger" 
+                                style="border-style: none; border-radius: 0%; width: 100%;">
+                                    {% if product in user.wishlist.products.all %}
+                                        ❌ Quitar de deseos
+                                    {% else %}
+                                        ♥ Añadir a deseos
+                                    {% endif %}
+                                </a>
+                            </div>
+                        {% else %}
+                            <div style="margin: 10px auto;">
+                                <a href="{% url 'login' %}?next={% url 'toggle_wishlist' product.id %}" 
+                                class="btn btn-danger" 
+                                style="border-style: none; border-radius: 0%; width: 100%;">
+                                    ♥ Añadir a deseos
+                                </a>
+                            </div>
+                        {% endif %}
+
                     </div>
                 </div>
             </div>

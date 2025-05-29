@@ -36,3 +36,21 @@ class Review(models.Model):
 
     def __str__(Self):
         return f"Reseña de {Self.product.product_name} por {Self.username}"
+
+class Wishlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wishlist')
+    products = models.ManyToManyField(Product, related_name='wishlists', blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Lista de deseos de {self.user.username}"
+
+    def add_product(self, product):
+        if not self.products.filter(id=product.id).exists():
+            self.products.add(product)
+            return True
+        return False  # El producto ya estaba en la lista
+
+    def remove_product(self, product):
+        self.products.remove(product)

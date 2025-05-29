@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login as auth_login, authenticate
 from django.http import HttpResponse
-from storeApp.models import Product, Review
+from storeApp.models import Product, Review, Wishlist
 from storeApp.forms import ReviewForm, CustomUserCreationForm, CustomAuthenticationForm
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
@@ -215,3 +217,29 @@ def login(request):
     else:
         form = CustomAuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
+
+@login_required
+def toggle_wishlist(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    wishlist, created = Wishlist.objects.get_or_create(user=request.user)
+    
+    if product in wishlist.products.all():
+        wishlist.products.remove(product)
+        messages.success(request, f'"{product.product_name}" eliminado de tu lista de deseos.')
+    else:
+        wishlist.products.add(product)
+        messages.success(request, f'"{product.product_name}" añadido a tu lista de deseos.')
+    
+    # Redirige a la página anterior (o a details si no hay referer)
+    return redirect(request.META.get('HTTP_REFERER', reverse('view_wishlist')))
+
+@login_required
+def view_wishlist(request):
+    """Muestra todos los productos en la lista de deseos del usuario"""
+    wishlist = get_object_or_404(Wishlist, user=request.user)
+    products = wishlist.products.all()
+    
+    return render(request, 'storeApp/wishlist.html', {
+        'wishlist': wishlist,
+        'products': products
+    })
